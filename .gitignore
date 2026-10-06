@@ -1,0 +1,43 @@
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+.env*
+
+# Local package-manager cache and generated audit/image artifacts
+.pnpm-store/
+/artifacts/
+/scripts/optimize-assets.mjs
+
+# Local AI-agent instructions, configuration, and conversations
+AGENTS*.md
+CLAUDE*.md
+GEMINI*.md
+COPILOT*.md
+copilot-instructions.md
+.agents/
+.codex/
+.claude/
+.cursor/
+.cursorrules
+.windsurf/
+.windsurfrules
+.aider*
+.continue/
+.clinerules
+.roo/
+.kilocode/
+.opencode/
+.github/agents/
+.github/instructions/
+.github/chatmodes/
+.github/prompts/
+.github/skills/
+/.mcp.json
+/mcp.json
+
+# Runtime and test output
+*.log
+coverage/
+playwright-report/
+test-results/
