@@ -2,9 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { news } from '@/data/news';
-import { EditorialCarousel } from '@/components/ui/carousel';
-import { Reveal } from '@/components/ui/reveal';
-export function NewsCarousel() {
+import { Reveal, RevealGroup } from '@/components/ui/reveal';
+export function NewsSection() {
   return (
     <section id="novedades" className="section news-section">
       <div className="container">
@@ -24,17 +23,7 @@ export function NewsCarousel() {
             </span>
           </div>
         </Reveal>
-      </div>
-      <Reveal className="news-content container-edge-left" direction="left">
-        <EditorialCarousel
-          id="news"
-          label="Carrusel de novedades"
-          labels={news.map((n) => n.title)}
-          previousLabel="Novedad anterior"
-          nextLabel="Novedad siguiente"
-          trackClassName="news-track"
-          dots
-        >
+        <RevealGroup className="news-grid" stagger={0.08}>
           {news.map((n, index) => (
             <article className="news-card" key={n.slug}>
               <Link className="news-image" href={`/novedades/${n.slug}`}>
@@ -45,7 +34,9 @@ export function NewsCarousel() {
                   style={{
                     objectPosition: n.image.includes('/professionals/') ? '50% 14%' : '50% 50%',
                   }}
-                  sizes="(max-width: 599px) 86vw, (max-width: 1023px) 60vw, 46vw"
+                  sizes={
+                    index === 0 ? '(max-width: 767px) 92vw, 55vw' : '(max-width: 767px) 92vw, 24vw'
+                  }
                 />
                 <span className="news-image-index" aria-hidden="true">
                   0{index + 1}
@@ -64,8 +55,8 @@ export function NewsCarousel() {
               </div>
             </article>
           ))}
-        </EditorialCarousel>
-      </Reveal>
+        </RevealGroup>
+      </div>
     </section>
   );
 }

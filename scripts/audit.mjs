@@ -29,16 +29,6 @@ async function screenshot(name) {
       window.scrollTo(0, y);
       await new Promise((r) => setTimeout(r, 35));
     }
-    // Visit offscreen slides before checking lazy images; they should stay deferred in normal use.
-    for (const track of document.querySelectorAll('.carousel-track')) {
-      track.scrollIntoView({ block: 'center', behavior: 'instant' });
-      await new Promise((r) => setTimeout(r, 35));
-      for (let x = 0; x < track.scrollWidth; x += track.clientWidth) {
-        track.scrollLeft = x;
-        await new Promise((r) => setTimeout(r, 35));
-      }
-      track.scrollLeft = 0;
-    }
     window.scrollTo(0, 0);
   });
   await page.waitForFunction(() => [...document.images].every((image) => image.complete));
@@ -221,21 +211,16 @@ try {
     .click();
   await page.getByRole('dialog').waitFor({ state: 'hidden' });
   flows.push('Menú móvil, cierre por Escape y navegación');
-  await page.locator('#novedades').scrollIntoViewIfNeeded();
-  await page.getByRole('button', { name: 'Novedad siguiente' }).click();
-  await expect(page.locator('.carousel-dots [aria-current=true]')).toHaveAttribute(
-    'aria-label',
-    `Ver novedad 2: Una nueva mirada para los más chicos`,
-  );
-  await page.locator('.news-track').focus();
-  await page.keyboard.press('ArrowRight');
-  await expect(page.locator('.carousel-dots [aria-current=true]')).toHaveAttribute(
-    'aria-label',
-    /^Ver novedad 3/,
-  );
+  const announcements = page.locator('.announcement-band');
+  await announcements.scrollIntoViewIfNeeded();
+  await expect(announcements.getByRole('button')).toHaveCount(0);
+  const initialNotice = await announcements.getAttribute('data-announcement-index');
+  await expect
+    .poll(() => announcements.getAttribute('data-announcement-index'), { timeout: 7500 })
+    .not.toBe(initialNotice);
   await page.locator('.faq-trigger').first().click();
   assert.equal(await page.locator('.faq-trigger[aria-expanded=true]').count(), 1);
-  flows.push('Carrusel con flechas y teclado, preguntas frecuentes');
+  flows.push('Banda informativa automática sin controles, preguntas frecuentes');
   await page.goto(base);
   await screenshot('inicio-final-320');
   const broken = await page

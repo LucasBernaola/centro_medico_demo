@@ -5,7 +5,7 @@ import { Reveal } from '@/components/ui/reveal';
 export function AppointmentCTA() {
   return (
     <section className="appointment-cta-section">
-      <div className="container container-wide">
+      <div className="container">
         <div className="appointment-cta">
           <Reveal className="cta-copy" direction="left">
             <span className="eyebrow">MÁS SIMPLE. MÁS CERCA.</span>

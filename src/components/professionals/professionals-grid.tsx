@@ -3,8 +3,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { doctors } from '@/data/professionals';
 import { ProfessionalCard } from './professional-card';
 import { SectionHeading } from '@/components/ui/section-heading';
-import { EditorialCarousel } from '@/components/ui/carousel';
-import { Reveal } from '@/components/ui/reveal';
+import { Reveal, RevealGroup } from '@/components/ui/reveal';
 export function ProfessionalsGrid() {
   return (
     <section id="profesionales" className="section professionals-section">
@@ -26,21 +25,11 @@ export function ProfessionalsGrid() {
             }
           />
         </Reveal>
-      </div>
-      <Reveal className="container-edge-right professionals-content" direction="right">
-        <EditorialCarousel
-          id="professionals"
-          label="Equipo médico de Nova"
-          labels={doctors.map((d) => d.name)}
-          previousLabel="Profesional anterior"
-          nextLabel="Profesional siguiente"
-        >
+        <RevealGroup className="professionals-grid" stagger={0.08}>
           {doctors.map((d) => (
             <ProfessionalCard doctor={d} key={d.id} />
           ))}
-        </EditorialCarousel>
-      </Reveal>
-      <div className="container">
+        </RevealGroup>
         <p className="illustration-note">
           Profesionales ficticios · Fotografías generadas e ilustrativas
         </p>

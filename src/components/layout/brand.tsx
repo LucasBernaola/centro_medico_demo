@@ -1,8 +1,16 @@
 import Link from 'next/link';
-export function Brand({ light = false }: { light?: boolean }) {
+import type { MouseEventHandler } from 'react';
+export function Brand({
+  light = false,
+  onClick,
+}: {
+  light?: boolean;
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
+}) {
   return (
     <Link
       href="/"
+      onClick={onClick}
       className={`brand ${light ? 'brand-light' : ''}`}
       aria-label="Centro Médico Nova · Inicio"
     >

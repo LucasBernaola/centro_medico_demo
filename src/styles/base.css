@@ -27,6 +27,7 @@
   --nova-fast: 180ms;
   --nova-duration: 240ms;
   --nova-section-space: clamp(60px, 7.5vw, 108px);
+  --nova-header-height: 77px;
   --font-sans: var(--font-manrope);
 }
 * {
@@ -34,7 +35,7 @@
 }
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 100px;
+  scroll-padding-top: var(--nova-header-height);
 }
 body {
   margin: 0;
@@ -292,6 +293,9 @@ fieldset {
   }
 }
 @media (min-width: 1024px) {
+  :root {
+    --nova-header-height: 91px;
+  }
   .container {
     width: calc(100% - 96px);
   }
@@ -318,23 +322,7 @@ fieldset {
 :root {
   --nova-gutter: 20px;
   --nova-content-width: 1240px;
-  --nova-edge-gutter: max(var(--nova-gutter), calc((100vw - var(--nova-content-width)) / 2));
   --nova-footer: #113d37;
-}
-.container-wide {
-  max-width: 1400px;
-}
-.container-edge-right,
-.container-edge-left {
-  margin-left: var(--nova-edge-gutter);
-  margin-right: 0;
-  min-width: 0;
-}
-.container-edge-right .carousel-footer {
-  margin-right: var(--nova-edge-gutter);
-}
-.container-edge-left .carousel-footer {
-  margin-right: var(--nova-edge-gutter);
 }
 @media (min-width: 600px) {
   :root {
@@ -345,12 +333,7 @@ fieldset {
   :root {
     --nova-gutter: 48px;
   }
-  .container-edge-left {
-    margin-left: 0;
-    margin-right: var(--nova-edge-gutter);
-  }
-  .container-edge-left .carousel-footer {
-    margin-left: var(--nova-edge-gutter);
-    margin-right: 0;
-  }
+}
+:root {
+  --nova-grid-gap: 24px;
 }

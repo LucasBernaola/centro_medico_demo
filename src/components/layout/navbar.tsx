@@ -1,49 +1,48 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as Dialog from '@radix-ui/react-dialog';
 import { ArrowUpRight, Menu, X, Clock3, MapPin } from 'lucide-react';
 import { Brand } from './brand';
 import { navigation, site } from '@/data/site';
+import { useNavbarNavigation } from './use-navbar-navigation';
 export function Navbar() {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const header = useRef<HTMLElement>(null);
   const path = usePathname();
-  const [activeSection, setActiveSection] = useState('inicio');
-  const active = path === '/' ? activeSection : path.split('/')[1];
+  const { active, scrolled, requestNavigation, finishMenuNavigation } = useNavbarNavigation(
+    path,
+    header,
+  );
+  function navigate(event: MouseEvent<HTMLAnchorElement>, href: string) {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    )
+      return;
+    const id = href.split('#')[1] || 'inicio';
+    if (path === '/') event.preventDefault();
+    requestNavigation({
+      id,
+      href,
+      deferred: open,
+      updateHistory: path === '/',
+      focus: open || event.detail === 0,
+    });
+    setOpen(false);
+  }
   useEffect(() => {
-    if (path !== '/') return;
-    let observer: IntersectionObserver;
-    const observe = () => {
-      observer?.disconnect();
-      observer = new IntersectionObserver(
-        (entries) => {
-          const visible = entries
-            .filter((entry) => entry.isIntersecting)
-            .sort((a, b) => b.boundingClientRect.top - a.boundingClientRect.top);
-          if (visible[0]) setActiveSection(visible[0].target.id);
-        },
-        { rootMargin: `-118px 0px -${Math.max(0, window.innerHeight - 180)}px 0px`, threshold: 0 },
-      );
-      for (const item of navigation) {
-        const id = item.href.split('#')[1] || 'inicio';
-        const section = document.getElementById(id);
-        if (section) observer.observe(section);
-      }
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    const closeOnDesktop = () => {
+      if (desktop.matches) setOpen(false);
     };
-    observe();
-    window.addEventListener('resize', observe);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', observe);
-    };
-  }, [path]);
-  useEffect(() => {
-    const update = () => setScrolled(window.scrollY > 20);
-    update();
-    window.addEventListener('scroll', update, { passive: true });
-    return () => window.removeEventListener('scroll', update);
+    desktop.addEventListener('change', closeOnDesktop);
+    return () => desktop.removeEventListener('change', closeOnDesktop);
   }, []);
   useEffect(() => {
     setOpen(false);
@@ -60,13 +59,14 @@ export function Navbar() {
           <span className="demo-label">Sitio de demostración</span>
         </div>
       </div>
-      <header className={`navbar ${scrolled ? 'scrolled' : ''}`}>
+      <header ref={header} className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="container navbar-inner">
-          <Brand />
+          <Brand onClick={(event) => navigate(event, '/')} />
           <nav className="desktop-navigation" aria-label="Navegación principal">
             {navigation.map((item) => (
               <Link
                 href={item.href}
+                onClick={(event) => navigate(event, item.href)}
                 key={item.label}
                 aria-current={
                   active === (item.href.split('#')[1] || 'inicio') ? 'location' : undefined
@@ -90,9 +90,23 @@ export function Navbar() {
             </Dialog.Trigger>
             <Dialog.Portal>
               <Dialog.Overlay className="menu-overlay" />
-              <Dialog.Content className="menu-panel">
+              <Dialog.Content
+                className="menu-panel"
+                onCloseAutoFocus={(event) => {
+                  if (finishMenuNavigation()) event.preventDefault();
+                  else if (window.matchMedia('(min-width: 1024px)').matches) {
+                    event.preventDefault();
+                    const destination =
+                      header.current?.querySelector<HTMLAnchorElement>(
+                        '.desktop-navigation [aria-current]',
+                      ) ||
+                      header.current?.querySelector<HTMLAnchorElement>('.desktop-navigation a');
+                    destination?.focus({ preventScroll: true });
+                  }
+                }}
+              >
                 <div className="menu-top">
-                  <Brand />
+                  <Brand onClick={(event) => navigate(event, '/')} />
                   <Dialog.Title className="sr-only">Centro Médico Nova</Dialog.Title>
                   <Dialog.Close className="icon-button" aria-label="Cerrar menú">
                     <X size={22} />
@@ -103,7 +117,7 @@ export function Navbar() {
                   {navigation.map((item) => (
                     <Link
                       href={item.href}
-                      onClick={() => setOpen(false)}
+                      onClick={(event) => navigate(event, item.href)}
                       key={item.label}
                       aria-current={
                         active === (item.href.split('#')[1] || 'inicio') ? 'location' : undefined

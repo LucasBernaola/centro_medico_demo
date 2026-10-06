@@ -6,7 +6,7 @@ export function AboutSection() {
   return (
     <section className="section about-section" id="nosotros">
       <div className="container about-grid">
-        <Reveal className="about-visual" direction="left">
+        <Reveal className="about-visual" direction="left" image>
           <div className="about-image">
             <Image
               src="/images/facilities/reception.webp"
