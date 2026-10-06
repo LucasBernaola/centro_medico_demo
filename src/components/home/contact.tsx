@@ -1,16 +1,17 @@
 import { MapPin, Phone, Mail, Clock3, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { site } from '@/data/site';
+import { Reveal } from '@/components/ui/reveal';
 export function ContactSection() {
   return (
     <section id="contacto" className="section contact-section">
       <div className="container contact-grid">
-        <div>
+        <Reveal className="contact-copy" direction="left">
           <span className="eyebrow">UN LUGAR PARA ENCONTRARNOS</span>
           <h2>
             Estamos cerca.
             <br />
-            Estamos para vos.
+            <em>Estamos para vos.</em>
           </h2>
           <p className="contact-intro">Encontrá toda la información para tu próxima visita.</p>
           <div className="contact-details">
@@ -48,15 +49,16 @@ export function ContactSection() {
             Organizá tu próxima consulta
             <ArrowUpRight size={17} />
           </Link>
-        </div>
-        <div
+        </Reveal>
+        <Reveal
           className="illustrative-map"
+          direction="right"
           role="img"
           aria-label="Plano ilustrativo de la ubicación ficticia de Centro Médico Nova. No representa una dirección real."
         >
           <svg viewBox="0 0 600 480" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-            <rect width="600" height="480" fill="#edf1ec" />
-            <g fill="#e0e7df">
+            <rect width="600" height="480" fill="var(--nova-surface-alt)" />
+            <g fill="var(--nova-border)">
               <rect x="30" y="20" width="150" height="105" rx="9" />
               <rect x="215" y="20" width="125" height="105" rx="9" />
               <rect x="400" y="20" width="180" height="105" rx="9" />
@@ -67,11 +69,16 @@ export function ContactSection() {
               <rect x="215" y="323" width="125" height="135" rx="9" />
               <rect x="400" y="323" width="180" height="135" rx="9" />
             </g>
-            <path d="M365 0v480M0 300h600" stroke="#fff" strokeWidth="34" />
-            <path d="M0 142h600M197 0v480" stroke="#fafcf8" strokeWidth="16" />
-            <path d="M0 300h600" stroke="#bfcfc4" strokeWidth="1" strokeDasharray="5 8" />
-            <rect x="440" y="183" width="100" height="70" rx="35" fill="#cbdac8" />
-            <g fill="#bcd0b8">
+            <path d="M365 0v480M0 300h600" stroke="var(--nova-white)" strokeWidth="34" />
+            <path d="M0 142h600M197 0v480" stroke="var(--nova-surface)" strokeWidth="16" />
+            <path
+              d="M0 300h600"
+              stroke="var(--nova-map-tree)"
+              strokeWidth="1"
+              strokeDasharray="5 8"
+            />
+            <rect x="440" y="183" width="100" height="70" rx="35" fill="var(--nova-map-park)" />
+            <g fill="var(--nova-map-tree)">
               <circle cx="460" cy="212" r="16" />
               <circle cx="488" cy="220" r="21" />
               <circle cx="520" cy="206" r="14" />
@@ -80,7 +87,7 @@ export function ContactSection() {
               x="350"
               y="432"
               transform="rotate(-90 350 432)"
-              fill="#9caca2"
+              fill="var(--nova-muted)"
               fontSize="11"
               letterSpacing="3"
             >
@@ -97,7 +104,7 @@ export function ContactSection() {
             <MapPin size={15} />
             Ubicación ficticia · Plano ilustrativo
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

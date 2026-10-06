@@ -44,7 +44,13 @@ La integración futura con Django REST Framework puede reemplazar `reserve` en e
 
 ## Diseño y accesibilidad
 
-Manrope local mediante next/font. Navy, azul y acentos sage. Menú móvil con Radix Dialog, radios nativos para selecciones, errores asociados a campos, controles de teclado, foco entre pasos y calendario sin input de fecha. Carrusel con scroll táctil, flechas y teclado; FAQ con details nativo. Motion (Framer Motion) solo para reveals y transiciones cortas, respetando movimiento reducido.
+Manrope e Instrument Serif locales mediante next/font: interfaz legible y acentos editoriales en títulos. Los tokens de color, superficies, radios, espaciado y duración se centralizan en `src/styles/base.css`. Verde profundo, teal sanitario, mint y superficies cálidas; los estados de interacción y de reserva comparten la misma paleta.
+
+El grid de lectura convive con un contenedor amplio para el CTA y composiciones abiertas hacia los bordes: hero a la derecha, institución a la izquierda, profesionales a la derecha y novedades a la izquierda. Las especialidades adoptan filas editoriales en dos columnas en desktop; móvil conserva una estructura simple. El navbar muestra hover y estado activo invertido, con scroll spy mediante IntersectionObserver y selección por categoría en páginas interiores. Las anclas respetan el offset del header y movimiento reducido.
+
+Menú móvil con Radix Dialog, radios nativos para selecciones, errores asociados a campos, foco entre pasos y calendario sin input de fecha. Los carruseles de profesionales y novedades permiten swipe, arrastre con mouse, flechas, Home/End y teclado; no tienen autoplay. FAQ con Radix Accordion, un único panel expandido y navegación por teclado. El ejemplo de horarios del CTA tiene estado visual independiente y no realiza reservas.
+
+Motion se configura en `NovaMotion`: entrada coordinada del hero, reveals una sola vez desde abajo o desde los laterales y transiciones cortas. `prefers-reduced-motion` desactiva animaciones, desplazamientos suaves y transiciones, manteniendo todo el contenido visible. En móvil, el formulario presenta el paso actual y una barra de progreso animada con transform; la lógica de reserva se conserva.
 
 SEO centralizado en `src/lib/seo.ts`, con **noindex/nofollow** por tratarse de una institución ficticia. La identidad, ubicación, teléfonos, nombres e imágenes son ilustrativos. Los textos públicos no brindan consejos médicos.
 
@@ -61,10 +67,11 @@ Con el servidor activo:
 ```sh
 node scripts/audit.mjs
 node scripts/accessibility.mjs
+node scripts/polish.mjs
 ```
 
-La auditoría usa Microsoft Edge en modo headless y recorre páginas públicas a 320, 375, 430, 768, 1024 y 1440 px. Verifica formularios, preselecciones, calendario, reserva, confirmación, persistencia durante la navegación, prevención de duplicados y ausencia de rutas administrativas. La auditoría de accesibilidad usa axe para contrastes, estructura y formularios en páginas y pasos de reserva. Capturas y resultados en `artifacts/public/`. Permite cambiar el destino con `NOVA_BASE_URL`.
+La auditoría usa Microsoft Edge en modo headless y recorre páginas públicas a 320, 375, 390, 430, 768, 1024, 1280 y 1440 px. Verifica formularios, preselecciones, calendario, reserva, confirmación, persistencia durante la navegación, prevención de duplicados y ausencia de rutas administrativas. Recorre también los slides fuera de pantalla antes de comprobar las imágenes diferidas. La auditoría de accesibilidad usa axe para contrastes, estructura y formularios en páginas y pasos de reserva. `polish.mjs` verifica los dos carruseles, arrastre sin activar enlaces, swipe táctil, límites, teclado, accordion, movimiento reducido, scroll spy y geometría de las composiciones abiertas. Capturas y resultados en `artifacts/public/` y `artifacts/polish/after/`. Permite cambiar el destino con `NOVA_BASE_URL`.
 
-Los prompts y el origen de los assets se documentan en `artifacts/image-prompts.json`. Los originales generados se conservan fuera del proyecto; solo los WebP optimizados se distribuyen con la web. La licencia de Manrope se incluye junto a las fuentes.
+Los prompts y el origen de los assets se documentan en `artifacts/image-prompts.json`. Los originales generados se conservan fuera del proyecto; solo los WebP optimizados se distribuyen con la web. Las licencias de Manrope e Instrument Serif se incluyen junto a las fuentes.
 
 Los archivos locales de agentes de IA, las cachés, los informes y capturas de auditoría, los prompts de generación y el script local de preparación de imágenes están excluidos del repositorio mediante `.gitignore`. Las imágenes finales de la web sí se versionan en `public/images/`.

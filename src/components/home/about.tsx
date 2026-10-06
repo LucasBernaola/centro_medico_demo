@@ -1,11 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight, Check } from 'lucide-react';
+import { Reveal } from '@/components/ui/reveal';
 export function AboutSection() {
   return (
     <section className="section about-section" id="nosotros">
       <div className="container about-grid">
-        <div className="about-visual">
+        <Reveal className="about-visual" direction="left">
           <div className="about-image">
             <Image
               src="/images/facilities/reception.webp"
@@ -22,13 +23,13 @@ export function AboutSection() {
               <strong>para sentirte bien.</strong>
             </span>
           </div>
-        </div>
-        <div className="about-copy">
+        </Reveal>
+        <Reveal className="about-copy" direction="right" delay={0.08}>
           <span className="eyebrow">CONOCÉ CENTRO MÉDICO NOVA</span>
           <h2>
             Buena medicina.
             <br />
-            Cercanía de verdad.
+            <em>Cercanía de verdad.</em>
           </h2>
           <p>
             Creemos que cuidar también es escuchar, explicar y acompañar. Por eso reunimos a un
@@ -55,7 +56,7 @@ export function AboutSection() {
           <Link href="/nosotros" className="text-link">
             Más sobre nuestra forma de cuidar <ArrowUpRight size={17} />
           </Link>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

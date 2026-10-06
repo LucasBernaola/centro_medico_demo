@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { Check, CalendarDays, Clock3, MapPin, ArrowUpRight } from 'lucide-react';
+import { CalendarDays, Clock3, MapPin, ArrowUpRight } from 'lucide-react';
+import { SuccessMark } from './success-mark';
 import { doctors } from '@/data/professionals';
 import { specialties } from '@/data/specialties';
 import { site } from '@/data/site';
@@ -15,9 +16,7 @@ export function AppointmentSuccess({
   const doctor = doctors.find((d) => d.id === reservation.doctorId)!;
   return (
     <section className="success-screen" aria-labelledby="success-title">
-      <div className="success-check">
-        <Check size={35} strokeWidth={1.8} />
-      </div>
+      <SuccessMark />
       <span className="eyebrow">TODO LISTO PARA TU PRÓXIMA CONSULTA</span>
       <h1 id="success-title" tabIndex={-1}>
         ¡Tu turno fue reservado!

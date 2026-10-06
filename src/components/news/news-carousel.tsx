@@ -1,72 +1,41 @@
-'use client';
-import { useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { news } from '@/data/news';
-import { SectionHeading } from '@/components/ui/section-heading';
+import { EditorialCarousel } from '@/components/ui/carousel';
+import { Reveal } from '@/components/ui/reveal';
 export function NewsCarousel() {
-  const track = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(0);
-  function move(delta: number) {
-    const element = track.current;
-    if (!element) return;
-    const card = element.children[0] as HTMLElement;
-    element.scrollBy({
-      left: delta * (card.offsetWidth + 24),
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        ? 'instant'
-        : 'smooth',
-    });
-  }
   return (
     <section id="novedades" className="section news-section">
       <div className="container">
-        <SectionHeading
-          eyebrow="NOVEDADES Y VIDA EN NOVA"
-          title="Información para vos."
-          text="Conocé lo que pasa en nuestro centro."
-          action={
-            <div className="carousel-controls">
-              <button
-                className="icon-button"
-                aria-label="Novedad anterior"
-                disabled={active === 0}
-                onClick={() => move(-1)}
-              >
-                <ArrowLeft size={19} />
-              </button>
-              <button
-                className="icon-button"
-                aria-label="Novedad siguiente"
-                disabled={active === news.length - 1}
-                onClick={() => move(1)}
-              >
-                <ArrowRight size={19} />
-              </button>
-            </div>
-          }
-        />
-        <div
-          className="news-track"
-          ref={track}
-          aria-label="Carrusel de novedades"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-              e.preventDefault();
-              move(e.key === 'ArrowRight' ? 1 : -1);
-            }
-          }}
-          onScroll={() => {
-            const el = track.current;
-            if (el) {
-              const width = (el.children[0] as HTMLElement).offsetWidth + 24;
-              setActive(Math.min(news.length - 1, Math.round(el.scrollLeft / width)));
-            }
-          }}
+        <Reveal className="news-intro" direction="right">
+          <div className="news-heading">
+            <span className="eyebrow">NOVEDADES Y VIDA EN NOVA</span>
+            <h2>
+              Información
+              <br />
+              <em>para vos.</em>
+            </h2>
+          </div>
+          <div className="news-intro-detail">
+            <p>Conocé lo que pasa en nuestro centro.</p>
+            <span className="news-intro-rule" aria-hidden="true">
+              +
+            </span>
+          </div>
+        </Reveal>
+      </div>
+      <Reveal className="news-content container-edge-left" direction="left">
+        <EditorialCarousel
+          id="news"
+          label="Carrusel de novedades"
+          labels={news.map((n) => n.title)}
+          previousLabel="Novedad anterior"
+          nextLabel="Novedad siguiente"
+          trackClassName="news-track"
+          dots
         >
-          {news.map((n) => (
+          {news.map((n, index) => (
             <article className="news-card" key={n.slug}>
               <Link className="news-image" href={`/novedades/${n.slug}`}>
                 <Image
@@ -74,10 +43,13 @@ export function NewsCarousel() {
                   alt={n.imageAlt}
                   fill
                   style={{
-                    objectPosition: n.image.includes('/professionals/') ? '50% 18%' : '50% 50%',
+                    objectPosition: n.image.includes('/professionals/') ? '50% 14%' : '50% 50%',
                   }}
-                  sizes="(max-width: 767px) 90vw, (max-width: 1023px) 45vw, 390px"
+                  sizes="(max-width: 599px) 86vw, (max-width: 1023px) 60vw, 46vw"
                 />
+                <span className="news-image-index" aria-hidden="true">
+                  0{index + 1}
+                </span>
               </Link>
               <div className="news-copy">
                 <span className="eyebrow">{n.category}</span>
@@ -92,29 +64,8 @@ export function NewsCarousel() {
               </div>
             </article>
           ))}
-        </div>
-        <div className="carousel-dots" aria-label="Posición del carrusel">
-          {news.map((n, i) => (
-            <button
-              key={n.slug}
-              aria-label={`Ver novedad ${i + 1}: ${n.title}`}
-              aria-current={active === i ? 'true' : undefined}
-              onClick={() => {
-                const el = track.current;
-                if (el)
-                  el.scrollTo({
-                    left: i * ((el.children[0] as HTMLElement).offsetWidth + 24),
-                    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
-                      ? 'instant'
-                      : 'smooth',
-                  });
-              }}
-            >
-              <span className={active === i ? 'active' : ''} />
-            </button>
-          ))}
-        </div>
-      </div>
+        </EditorialCarousel>
+      </Reveal>
     </section>
   );
 }

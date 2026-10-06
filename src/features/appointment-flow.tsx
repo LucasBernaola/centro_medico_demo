@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
+import { useNovaMotion } from '@/components/ui/motion-provider';
 import { ArrowLeft, ArrowRight, Check, LockKeyhole, Clock3 } from 'lucide-react';
 import { doctors } from '@/data/professionals';
 import { specialties } from '@/data/specialties';
@@ -33,7 +34,7 @@ const descriptions = [
 const emptyPatient: PatientData = { firstName: '', lastName: '', dni: '', phone: '', email: '' };
 export function AppointmentFlow({ preset }: { preset: Partial<Booking> }) {
   const { reserve } = useBooking();
-  const reduced = useReducedMotion();
+  const { reduced, ease } = useNovaMotion();
   const [step, setStep] = useState(0);
   const [patient, setPatient] = useState<PatientData>(emptyPatient);
   const [booking, setBooking] = useState<Booking>({
@@ -152,7 +153,22 @@ export function AppointmentFlow({ preset }: { preset: Partial<Booking> }) {
               ))}
             </ol>
             <div className="mobile-step-label">
-              Paso {step + 1} de 5 · {steps[step]}
+              <span>Paso {step + 1} de 5</span>
+              <strong>{steps[step]}</strong>
+            </div>
+            <div
+              className="step-progress"
+              role="progressbar"
+              aria-label="Progreso de tu solicitud"
+              aria-valuenow={step + 1}
+              aria-valuemin={1}
+              aria-valuemax={5}
+            >
+              <motion.span
+                initial={false}
+                animate={{ scaleX: (step + 1) / 5 }}
+                transition={{ duration: reduced ? 0 : 0.22, ease }}
+              />
             </div>
             <form
               noValidate

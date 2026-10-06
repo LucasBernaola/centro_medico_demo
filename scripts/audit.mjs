@@ -1,4 +1,4 @@
-import { chromium } from '@playwright/test';
+import { chromium, expect } from '@playwright/test';
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 const base = process.env.NOVA_BASE_URL || 'http://localhost:3000';
@@ -29,8 +29,19 @@ async function screenshot(name) {
       window.scrollTo(0, y);
       await new Promise((r) => setTimeout(r, 35));
     }
+    // Visit offscreen slides before checking lazy images; they should stay deferred in normal use.
+    for (const track of document.querySelectorAll('.carousel-track')) {
+      track.scrollIntoView({ block: 'center', behavior: 'instant' });
+      await new Promise((r) => setTimeout(r, 35));
+      for (let x = 0; x < track.scrollWidth; x += track.clientWidth) {
+        track.scrollLeft = x;
+        await new Promise((r) => setTimeout(r, 35));
+      }
+      track.scrollLeft = 0;
+    }
     window.scrollTo(0, 0);
   });
+  await page.waitForFunction(() => [...document.images].every((image) => image.complete));
   await page.screenshot({ path: `artifacts/public/${name}.png`, fullPage: true });
 }
 async function noOverflow(label) {
@@ -62,7 +73,7 @@ async function reachTimes() {
   await next();
 }
 try {
-  for (const width of [320, 375, 430, 768, 1024, 1440]) {
+  for (const width of [320, 375, 390, 430, 768, 1024, 1280, 1440]) {
     await page.setViewportSize({ width, height: 950 });
     for (const route of routes) {
       const response = await page.goto(base + route);
@@ -179,7 +190,7 @@ try {
     true,
   );
   flows.push('Día completamente ocupado deshabilitado');
-  for (const width of [320, 375, 430, 768, 1024, 1440]) {
+  for (const width of [320, 375, 390, 430, 768, 1024, 1280, 1440]) {
     await page.setViewportSize({ width, height: 950 });
     await page.goto(base + '/turnos?especialidad=cardio&profesional=sofia');
     await reachTimes();
@@ -196,34 +207,34 @@ try {
     await noOverflow(`Éxito@${width}`);
     if (width === 320 || width === 1440) await screenshot(`confirmacion-${width}`);
   }
-  flows.push('Reserva completa en los seis tamaños');
+  flows.push('Reserva completa en los ocho tamaños');
   await page.setViewportSize({ width: 320, height: 850 });
   await page.goto(base);
   await page.getByRole('button', { name: 'Abrir menú' }).click();
   await page.getByRole('dialog').waitFor();
   await page.keyboard.press('Escape');
-  assert.equal(await page.getByRole('dialog').count(), 0);
+  await page.getByRole('dialog').waitFor({ state: 'hidden' });
   await page.getByRole('button', { name: 'Abrir menú' }).click();
   await page
     .getByRole('navigation', { name: 'Menú móvil' })
     .getByRole('link', { name: 'Contacto' })
     .click();
-  assert.equal(await page.getByRole('dialog').count(), 0);
+  await page.getByRole('dialog').waitFor({ state: 'hidden' });
   flows.push('Menú móvil, cierre por Escape y navegación');
   await page.locator('#novedades').scrollIntoViewIfNeeded();
   await page.getByRole('button', { name: 'Novedad siguiente' }).click();
-  assert.equal(
-    await page.locator('.carousel-dots [aria-current=true]').getAttribute('aria-label'),
+  await expect(page.locator('.carousel-dots [aria-current=true]')).toHaveAttribute(
+    'aria-label',
     `Ver novedad 2: Una nueva mirada para los más chicos`,
   );
   await page.locator('.news-track').focus();
   await page.keyboard.press('ArrowRight');
-  assert.match(
-    await page.locator('.carousel-dots [aria-current=true]').getAttribute('aria-label'),
+  await expect(page.locator('.carousel-dots [aria-current=true]')).toHaveAttribute(
+    'aria-label',
     /^Ver novedad 3/,
   );
-  await page.locator('.faq-grid summary').first().click();
-  assert.equal(await page.locator('.faq-grid details[open]').count(), 1);
+  await page.locator('.faq-trigger').first().click();
+  assert.equal(await page.locator('.faq-trigger[aria-expanded=true]').count(), 1);
   flows.push('Carrusel con flechas y teclado, preguntas frecuentes');
   await page.goto(base);
   await screenshot('inicio-final-320');
@@ -242,8 +253,8 @@ try {
   flows.push('Imágenes locales, noindex y estructura institucional');
   const report = {
     pages: routes.length,
-    viewports: 6,
-    responsiveChecks: 48,
+    viewports: 8,
+    responsiveChecks: 64,
     overflowFailures: overflow,
     runtimeErrors,
     imageFailures,

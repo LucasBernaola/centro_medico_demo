@@ -15,9 +15,11 @@ export function SectionHeading({
       <div>
         <span className="eyebrow">{eyebrow}</span>
         <h2>{title}</h2>
-        {text && <p>{text}</p>}
       </div>
-      {action}
+      <div className="section-heading-detail">
+        {text && <p>{text}</p>}
+        {action}
+      </div>
     </div>
   );
 }

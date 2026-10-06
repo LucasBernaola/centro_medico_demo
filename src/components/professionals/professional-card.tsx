@@ -12,9 +12,10 @@ export function ProfessionalCard({ doctor }: { doctor: Doctor }) {
           src={doctor.image}
           alt={`Retrato ilustrativo de ${doctor.name}, profesional ficticio de Nova.`}
           fill
-          sizes="(max-width: 600px) 90vw, (max-width: 1023px) 45vw, 300px"
+          sizes="(max-width: 599px) 86vw, (max-width: 1023px) 46vw, 400px"
         />
         <span className="profile-link">
+          <span>Conocer profesional</span>
           <ArrowUpRight size={19} />
           <span className="sr-only">Conocer a {doctor.name}</span>
         </span>

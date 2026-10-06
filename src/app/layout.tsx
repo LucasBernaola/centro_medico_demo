@@ -4,6 +4,7 @@ import { BookingProvider } from '@/components/appointments/booking-provider';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
 import { siteMetadata } from '@/lib/seo';
+import { NovaMotion } from '@/components/ui/motion-provider';
 const font = localFont({
   src: [
     { path: './fonts/manrope-regular.ttf', weight: '400' },
@@ -14,18 +15,29 @@ const font = localFont({
   variable: '--font-manrope',
   display: 'swap',
 });
+const editorial = localFont({
+  src: [
+    { path: './fonts/instrument-serif-regular.ttf', weight: '400', style: 'normal' },
+    { path: './fonts/instrument-serif-italic.ttf', weight: '400', style: 'italic' },
+  ],
+  variable: '--font-editorial',
+  display: 'swap',
+  preload: true,
+});
 export const metadata = siteMetadata;
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es-AR">
-      <body className={font.variable}>
+      <body className={`${font.variable} ${editorial.variable}`}>
         <a className="skip-link" href="#contenido">
           Saltar al contenido
         </a>
         <BookingProvider>
-          <Navbar />
-          <main id="contenido">{children}</main>
-          <Footer />
+          <NovaMotion>
+            <Navbar />
+            <main id="contenido">{children}</main>
+            <Footer />
+          </NovaMotion>
         </BookingProvider>
       </body>
     </html>

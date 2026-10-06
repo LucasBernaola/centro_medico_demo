@@ -4,30 +4,33 @@ import { specialties } from '@/data/specialties';
 import { SpecialtyIcon } from '@/components/ui/specialty-icon';
 import { SectionHeading } from '@/components/ui/section-heading';
 import { bookingHref } from '@/lib/schedule';
+import { Reveal, RevealGroup } from '@/components/ui/reveal';
 export function SpecialtiesGrid({ heading = true }: { heading?: boolean }) {
   return (
     <section id="especialidades" className="section specialties-section">
       <div className="container">
         {heading && (
-          <SectionHeading
-            eyebrow="DISTINTAS ESPECIALIDADES. UN MISMO CUIDADO."
-            title={
-              <>
-                La atención que necesitás,
-                <br />
-                en un mismo lugar.
-              </>
-            }
-            text="Elegí tu especialidad. Nosotros te acompañamos en el siguiente paso."
-            action={
-              <Link href="/especialidades" className="text-link">
-                Conocer todas
-                <ArrowUpRight size={17} />
-              </Link>
-            }
-          />
+          <Reveal>
+            <SectionHeading
+              eyebrow="DISTINTAS ESPECIALIDADES. UN MISMO CUIDADO."
+              title={
+                <>
+                  La atención que necesitás,
+                  <br />
+                  <em>en un mismo lugar.</em>
+                </>
+              }
+              text="Elegí tu especialidad. Nosotros te acompañamos en el siguiente paso."
+              action={
+                <Link href="/especialidades" className="text-link">
+                  Conocer todas
+                  <ArrowUpRight size={17} />
+                </Link>
+              }
+            />
+          </Reveal>
         )}
-        <div className="specialties-grid">
+        <RevealGroup className="specialties-grid">
           {specialties.map((s, index) => (
             <article className="specialty-card" key={s.id}>
               <div className="specialty-card-top">
@@ -56,7 +59,7 @@ export function SpecialtiesGrid({ heading = true }: { heading?: boolean }) {
               </div>
             </article>
           ))}
-        </div>
+        </RevealGroup>
       </div>
     </section>
   );
